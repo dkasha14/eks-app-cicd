@@ -1,3 +1,7 @@
+don t modify single block ... rewrite final same content what i pasted now withe new forramt 
+
+Got it, Asha — here is your fully rewritten README.md with correct formatting, no broken code blocks, no inconsistencies. Just copy–paste this entire content.
+
 # 🚀 EKS CI/CD Pipeline with GitHub Actions, Terraform & AWS
 
 ## 📖 Overview
@@ -5,6 +9,7 @@
 This project demonstrates a complete CI/CD pipeline that automates the process of building, storing, and deploying a containerized application to Amazon EKS.
 
 The setup follows modern DevOps principles:
+
 - Infrastructure as Code (Terraform)
 - Secure authentication using OIDC (no AWS keys)
 - Container-based deployment (Docker)
@@ -38,14 +43,15 @@ Any push to the `master` branch triggers the GitHub Actions workflow automatical
 
 Instead of storing AWS credentials, the pipeline uses OIDC:
 
-- GitHub generates a temporary token
-- AWS validates the token using OIDC provider
-- IAM role `github-actions-eks-role` is assumed
+- GitHub generates a temporary token  
+- AWS validates the token using OIDC provider  
+- IAM role `github-actions-eks-role` is assumed  
 
 This approach provides:
-- Zero hardcoded secrets
-- Temporary access tokens
-- Secure authentication model
+
+- Zero hardcoded secrets  
+- Temporary access tokens  
+- Secure authentication model  
 
 ---
 
@@ -53,9 +59,9 @@ This approach provides:
 
 The GitHub Actions runner builds the Docker image:
 
-- Application source is packaged
-- Dependencies are installed
-- Image is created and tagged
+- Application source is packaged  
+- Dependencies are installed  
+- Image is created and tagged  
 
 ```bash
 docker build -t dev-eks-app .
@@ -151,14 +157,17 @@ Pods and Service (External IP)
 Application Output
 
 🌐 Application Access
+
 http://<LoadBalancer-URL>
+
 🧠 Concepts Demonstrated
 CI/CD automation using GitHub Actions
 Secure AWS authentication with OIDC
 Docker image lifecycle management
 Kubernetes Deployment and Service usage
 Infrastructure provisioning with Terraform
-🚀 Possible Enhancements
+
+ Possible Enhancements
 Helm-based deployments
 Multi-environment pipelines
 HTTPS using Ingress + ACM
@@ -166,9 +175,9 @@ Monitoring (Prometheus & Grafana)
 Versioned image tagging strategy
 👩‍💻 Author
 
-Asha
- — DevOps & AI-DevOps Engineer
+Asha 
+— DevOps & AI-DevOps Engineer
 
 ⭐ Summary
 
-This project showcases a real-world DevOps pipeline where infrastructure, security, CI/CD, and Kubernetes work together to deliver a fully automated deployment system.i
+This project showcases a real-world DevOps pipeline where infrastructure, security, CI/CD, and Kubernetes work together to deliver a fully automated deployment system.
