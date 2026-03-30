@@ -21,15 +21,17 @@ GitHub Repository (Application Code)
         ↓
 GitHub Actions (CI/CD Pipeline Execution)
         ↓
-OIDC Authentication → AWS IAM Role Assumption
+OIDC Authentication
         ↓
-Docker Build Stage (Container Image Creation)
+AWS IAM Role Assumption
+        ↓
+Docker Build (Container Image Creation)
         ↓
 Amazon ECR (Private Image Registry)
         ↓
 Amazon EKS Control Plane
         ↓
-Worker Nodes (Kubernetes Pods Running Containers)
+Worker Nodes (Kubernetes Pods)
         ↓
 Kubernetes Service (LoadBalancer)
         ↓
