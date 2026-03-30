@@ -17,28 +17,29 @@ The pipeline ensures that every code change is automatically built and deployed 
 
 ## 🏗️ Architecture Flow
 
+```
 GitHub Repository (Application Code)
-        ↓
+↓
 GitHub Actions (CI/CD Pipeline Execution)
-        ↓
+↓
 OIDC Authentication
-        ↓
+↓
 AWS IAM Role Assumption
-        ↓
+↓
 Docker Build (Container Image Creation)
-        ↓
+↓
 Amazon ECR (Private Image Registry)
-        ↓
+↓
 Amazon EKS Control Plane
-        ↓
+↓
 Worker Nodes (Kubernetes Pods)
-        ↓
+↓
 Kubernetes Service (LoadBalancer)
-        ↓
+↓
 AWS Elastic Load Balancer (Public Endpoint)
-        ↓
+↓
 End User (Browser Access)
-
+```
 ---
 
 ## 🔄 Pipeline Execution Flow
