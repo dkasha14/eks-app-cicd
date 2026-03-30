@@ -1,163 +1,174 @@
-# 🚀 End-to-End EKS CI/CD Pipeline using GitHub Actions, Terraform & AWS
+# 🚀 EKS CI/CD Pipeline with GitHub Actions, Terraform & AWS
 
-## 📌 Project Overview
+## 📖 Overview
 
-This project demonstrates a complete, production-style CI/CD pipeline that automates building, packaging, and deploying an application to Amazon EKS using GitHub Actions.
+This project demonstrates a complete CI/CD pipeline that automates the process of building, storing, and deploying a containerized application to Amazon EKS.
 
-It follows modern DevOps practices:
+The setup follows modern DevOps principles:
 - Infrastructure as Code (Terraform)
 - Secure authentication using OIDC (no AWS keys)
-- Containerization using Docker
-- Deployment using Kubernetes
+- Container-based deployment (Docker)
+- Kubernetes orchestration (EKS)
 
-The pipeline eliminates manual deployment and enables a fully automated, secure, and scalable workflow.
-
----
-
-## 🧱 High-Level Architecture
-
-GitHub → GitHub Actions → AWS IAM (OIDC Role) → Amazon ECR → Amazon EKS → LoadBalancer → End User
+The pipeline ensures that every code change is automatically built and deployed without manual intervention.
 
 ---
 
-## 🔄 End-to-End Workflow
+## 🏗️ Architecture Flow
 
-### 1. Code Push (Trigger)
-
-When code is pushed to the `master` branch, GitHub Actions automatically triggers the pipeline.
-
----
-
-### 2. Secure Authentication using OIDC
-
-Instead of storing AWS credentials, GitHub uses OpenID Connect (OIDC):
-
-- GitHub generates a temporary identity token
-- AWS validates the token via OIDC provider
-- IAM role `github-actions-eks-role` is assumed securely
-
-This ensures:
-- No hardcoded secrets
-- Temporary credentials
-- High security
+GitHub Repository  
+→ GitHub Actions (CI/CD Pipeline)  
+→ AWS IAM (OIDC Role Assumption)  
+→ Amazon ECR (Image Storage)  
+→ Amazon EKS (Kubernetes Cluster)  
+→ LoadBalancer Service  
+→ End User (Browser Access)
 
 ---
 
-### 3. Docker Image Build (CI Phase)
+## 🔄 Pipeline Execution Flow
 
-Inside GitHub Actions runner:
+### 1. Code Trigger
 
-- Application is packaged into a Docker image
+Any push to the `master` branch triggers the GitHub Actions workflow automatically.
+
+---
+
+### 2. Authentication (OIDC-Based Access)
+
+Instead of storing AWS credentials, the pipeline uses OIDC:
+
+- GitHub generates a temporary token
+- AWS validates the token using OIDC provider
+- IAM role `github-actions-eks-role` is assumed
+
+This approach provides:
+- Zero hardcoded secrets
+- Temporary access tokens
+- Secure authentication model
+
+---
+
+### 3. Build Phase (Docker Image Creation)
+
+The GitHub Actions runner builds the Docker image:
+
+- Application source is packaged
 - Dependencies are installed
-- Image is tagged
+- Image is created and tagged
 
 ```bash
 docker build -t dev-eks-app .
-4. Push Image to Amazon ECR
+4. Push Phase (ECR Integration)
 
-The Docker image is pushed to ECR:
+The Docker image is pushed to Amazon ECR:
 
 docker push 816069164153.dkr.ecr.us-east-1.amazonaws.com/dev-eks-app:latest
 
-ECR:
+ECR acts as:
 
-Stores container images
-Acts as private registry
-Allows secure image pulling by Kubernetes
-5. Connect to EKS Cluster
+A private container registry
+Central storage for images
+Source for Kubernetes deployments
+5. Cluster Access (EKS Connection)
 
-Pipeline connects to EKS:
+Pipeline connects to the Kubernetes cluster:
 
 aws eks update-kubeconfig --region us-east-1 --name EKS-DEV
 
-This enables kubectl access.
+This allows GitHub Actions to run kubectl commands.
 
-6. Kubernetes Deployment (CD Phase)
+6. Deployment Phase (Kubernetes Apply)
 
-Pipeline applies manifests:
+Kubernetes manifests are applied:
 
 kubectl apply -f k8s/
 
 This creates:
 
-Deployment (Pods)
-Service (LoadBalancer)
-7. Container Execution in EKS
+Deployment → manages Pods
+Service → exposes application
+7. Runtime Execution (EKS)
+Kubernetes pulls image from ECR
+Pods are created inside worker nodes
+Containers start running the application
 
-Kubernetes pulls image from ECR and runs containers inside Pods.
+Key idea:
 
-Key concept:
+Docker builds the image
+Kubernetes runs the container
+8. External Exposure (LoadBalancer)
 
-Docker builds image
-Kubernetes runs containers
-8. Service Exposure (LoadBalancer)
+A Kubernetes Service of type LoadBalancer:
 
-Kubernetes Service:
-
-Type: LoadBalancer
-AWS provisions ELB
-External traffic routed to Pods
-🔐 IAM & Access Control
+AWS provisions an ELB automatically
+Traffic is routed to Pods
+Application becomes publicly accessible
+🔐 Access Control & Security
 IAM Role (GitHub Actions)
 Created via Terraform
 Assumed using OIDC
-Permissions:
-ECR access
-EKS access
-Kubernetes RBAC (aws-auth)
+Grants access to:
+ECR (push images)
+EKS (cluster operations)
+Kubernetes RBAC Mapping
+
+IAM role is mapped in aws-auth:
+
 mapRoles:
   - rolearn: arn:aws:iam::816069164153:role/github-actions-eks-role
+    username: github-actions
     groups:
       - system:masters
 
-Allows GitHub Actions to deploy to cluster.
+This enables deployment access inside the cluster.
 
-📦 Infrastructure (Terraform)
+🧩 Infrastructure Setup (Terraform)
 
-Modular design:
+The infrastructure is modular and reusable:
 
-VPC (networking)
-EKS cluster
-Node groups
-ECR repository
-IAM roles
+VPC (networking layer)
+EKS Cluster (control plane)
+Node Groups (compute layer)
+ECR Repository (image storage)
+IAM Roles (security)
 
-Supports multiple environments (dev, sit, prod).
+Supports environment-based deployments (dev, sit, prod).
 
-📸 Screenshots
-1️⃣ Repository Structure
+📸 Project Screenshots
+Repository Structure
 
-2️⃣ Pipeline Success
+CI/CD Pipeline Success
 
-3️⃣ Pipeline Steps
+Pipeline Execution Steps
 
-4️⃣ ECR Repository
+ECR Repository
 
-5️⃣ ECR Image
+ECR Image
 
-6️⃣ Pods & Service
+Pods and Service (External IP)
 
-7️⃣ Application Output
+Application Output
 
 🌐 Application Access
 http://<LoadBalancer-URL>
-🧠 Key Concepts Demonstrated
+🧠 Concepts Demonstrated
 CI/CD automation using GitHub Actions
-Secure AWS authentication using OIDC
-Docker image lifecycle (build → push)
-Kubernetes deployment and service exposure
-Infrastructure as Code using Terraform
-🚀 Future Enhancements
+Secure AWS authentication with OIDC
+Docker image lifecycle management
+Kubernetes Deployment and Service usage
+Infrastructure provisioning with Terraform
+🚀 Possible Enhancements
 Helm-based deployments
 Multi-environment pipelines
-HTTPS with Ingress + ACM
-Monitoring (Prometheus, Grafana)
-Image versioning (instead of latest)
+HTTPS using Ingress + ACM
+Monitoring (Prometheus & Grafana)
+Versioned image tagging strategy
 👩‍💻 Author
 
-Asha 
-– DevOps & AI-DevOps Engineer
+Asha
+ — DevOps & AI-DevOps Engineer
 
-⭐ Final Note
+⭐ Summary
 
-This project demonstrates a real-world DevOps pipeline integrating CI/CD, cloud infrastructure, containerization, and Kubernetes into a single automated workflow.
+This project showcases a real-world DevOps pipeline where infrastructure, security, CI/CD, and Kubernetes work together to deliver a fully automated deployment system.i
